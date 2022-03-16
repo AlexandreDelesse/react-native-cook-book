@@ -24,17 +24,17 @@ const storeRecipe = async (recipe) => {
 const getRecipes = async () => {
   try {
     const recipes = await AsyncStorage.getItem(types.RECIPES);
-    return JSON.parse(recipes);
+    return recipes === null ? [] : JSON.parse(recipes);
   } catch (err) {
     throw err;
   }
 };
 
-const deleteRecipe = async (recipeId) => {
+const deleteRecipeById = async (recipeId) => {
   try {
     const recipes = await getRecipes();
     const filteredRecipes = recipes.filter((recipe) => recipe.id !== recipeId);
-    await AsyncStorage.setItem(types.RECIPES, filteredRecipes);
+    await AsyncStorage.setItem(types.RECIPES, JSON.stringify(filteredRecipes));
   } catch (err) {
     throw err;
   }
@@ -48,4 +48,4 @@ const deleteAllRecipe = async () => {
   }
 };
 
-export { storeRecipe, getRecipes, deleteRecipe, deleteAllRecipe };
+export { storeRecipe, getRecipes, deleteRecipeById, deleteAllRecipe };

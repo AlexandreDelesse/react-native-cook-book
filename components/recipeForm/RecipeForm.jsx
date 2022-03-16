@@ -3,7 +3,7 @@ import { Text, View, TextInput, Button, StyleSheet } from "react-native";
 import PropTypes from "prop-types";
 import ItemAddForm from "./ItemAddForm";
 
-function RecipeForm({ onSubmit }) {
+function RecipeForm({ onSubmit, onCancel }) {
   const [recipe, setRecipe] = useState({ title: "", items: [] });
 
   const onInputTextChange = (text, name) => {
@@ -41,6 +41,7 @@ function RecipeForm({ onSubmit }) {
 
   return (
     <View style={styles.container}>
+      <Button title="retour" onPress={onCancel} />
       <Text>Créer une recette : </Text>
       <TextInput
         style={styles.input}
@@ -51,7 +52,7 @@ function RecipeForm({ onSubmit }) {
       />
       <ItemAddForm onSubmit={onSubmitAddItem} />
       {recipe.items.map((item, index) => (
-        <View style={styles.row}>
+        <View style={styles.row} key={index}>
           <Text>
             {item.name} {item.count} {item.unit}
           </Text>
@@ -68,15 +69,17 @@ function RecipeForm({ onSubmit }) {
 
 RecipeForm.propTypes = {
   onSubmit: PropTypes.func,
+  onCancel: PropTypes.func,
 };
 
 RecipeForm.defaultProps = {
   onSubmit: () => {},
+  onCancel: () => {},
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.5,
+    flex: 0.8,
     marginTop: 40,
     padding: 10,
   },

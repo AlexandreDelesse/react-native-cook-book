@@ -7,49 +7,65 @@ import {
   storeRecipe,
   getRecipes,
   deleteAllRecipe,
+  deleteRecipeById,
 } from "./services/recipeStore.service";
+import RecipeList from "./components/recipes/RecipeList";
 
 export default function App() {
   const [refresh, setRefresh] = useState(false);
+  const [recipes, setRecipes] = useState([]);
+  const [isCreatingRecipe, setIsCreatingRecipe] = useState(false);
+
   const handleOnSubmitRecipeForm = async (recipe) => {
     try {
       await storeRecipe(recipe);
       setRefresh(!refresh);
+      toggleCreatingRecipe();
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleOnDeleteAllRecipe = async () => {
+  const handleOnDeleteRecipe = async (recipeId) => {
     try {
-      await deleteAllRecipe();
+      await deleteRecipeById(recipeId);
       setRefresh(!refresh);
     } catch (err) {
       console.log(err);
     }
   };
 
+  const toggleCreatingRecipe = () => {
+    setIsCreatingRecipe(!isCreatingRecipe);
+  };
+
   useEffect(() => {
-    getRecipes().then((res) => console.log(res));
+    getRecipes().then((res) => setRecipes(res));
   }, [refresh]);
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <RecipeForm onSubmit={handleOnSubmitRecipeForm} />
-
-      <Button title="delete all recipes" onPress={handleOnDeleteAllRecipe} />
+      {isCreatingRecipe ? (
+        <RecipeForm
+          onSubmit={handleOnSubmitRecipeForm}
+          onCancel={toggleCreatingRecipe}
+        />
+      ) : (
+        <>
+          <RecipeList recipes={recipes} onDelete={handleOnDeleteRecipe} />
+          <Button title="Ajouter une recette" onPress={toggleCreatingRecipe} />
+        </>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.5,
     backgroundColor: "#fff",
-
     justifyContent: "center",
-    borderBottomWidth: 2,
     width: "100%",
   },
 });
