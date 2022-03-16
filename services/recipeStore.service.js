@@ -1,10 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import uuid from "react-native-uuid";
 
 const types = { RECIPES: "recipes" };
 
 const storeRecipe = async (recipe) => {
-  if (!recipe.name || !recipe.items > 0) {
-    throw err;
+  recipe.id = uuid.v4();
+  if (!recipe.title) {
+    throw Error;
   }
   try {
     const recipes = await getRecipes();
@@ -38,4 +40,12 @@ const deleteRecipe = async (recipeId) => {
   }
 };
 
-export { storeRecipe, getRecipes, deleteRecipe };
+const deleteAllRecipe = async () => {
+  try {
+    await AsyncStorage.setItem(types.RECIPES, "");
+  } catch (err) {
+    throw err;
+  }
+};
+
+export { storeRecipe, getRecipes, deleteRecipe, deleteAllRecipe };
